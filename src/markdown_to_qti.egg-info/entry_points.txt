@@ -1,2 +1,0 @@
-[console_scripts]
-markdown-to-qti = markdown_to_qti.cli:main
