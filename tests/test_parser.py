@@ -96,6 +96,68 @@ class TestParseMarkdownExam:
         assert "echo" in questions[0].choices[0].text
         assert questions[0].choices[1].is_correct
 
+    def test_question_with_code_block_on_separate_line_in_choice(self):
+        """Test parsing a question with code blocks on separate lines in choices."""
+        markdown = """
+1. Which is the correct function definition?
+
+*a.
+```python
+def my_function():
+    pass
+```
+
+b.
+```python
+function my_function():
+    pass
+```
+
+c.
+```python
+func my_function():
+    pass
+```
+
+d.
+```python
+define my_function():
+    pass
+```
+"""
+        questions = parse_markdown_exam(markdown)
+        
+        assert len(questions) == 1
+        assert len(questions[0].choices) == 4
+        assert questions[0].correct_answer == "a"
+        assert questions[0].choices[0].is_correct
+        assert "def my_function" in questions[0].choices[0].text
+        assert "function my_function" in questions[0].choices[1].text
+        assert "func my_function" in questions[0].choices[2].text
+        assert "define my_function" in questions[0].choices[3].text
+
+    def test_question_with_code_block_inline_in_choice(self):
+        """Test parsing choices where code block starts on same line as choice marker."""
+        markdown = """
+1. Which is the correct syntax?
+
+   *a. ```python
+       def foo():
+           pass
+       ```
+   b. ```python
+      function foo():
+          pass
+      ```
+"""
+        questions = parse_markdown_exam(markdown)
+        
+        assert len(questions) == 1
+        assert len(questions[0].choices) == 2
+        assert questions[0].correct_answer == "a"
+        assert "def foo" in questions[0].choices[0].text
+        assert "function foo" in questions[0].choices[1].text
+
     def test_question_with_inline_code(self):
         """Test parsing a question with inline code."""
         markdown = """

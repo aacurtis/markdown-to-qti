@@ -23,6 +23,25 @@ class Question:
     correct_answer: Optional[str] = None
 
 
+def _update_code_block_state(text: str, in_code_block: bool) -> bool:
+    """
+    Update the code block state based on fence markers in the text.
+    
+    Args:
+        text: The text to check for fence markers.
+        in_code_block: Current code block state.
+        
+    Returns:
+        Updated code block state (True if inside a code block).
+    """
+    # Count fence markers in the text
+    fence_count = text.count('```')
+    # Each pair of markers toggles in and out, so odd count means state changes
+    if fence_count % 2 == 1:
+        return not in_code_block
+    return in_code_block
+
+
 def parse_markdown_exam(markdown_content: str) -> List[Question]:
     """
     Parse a markdown exam file and extract questions.
@@ -90,7 +109,9 @@ def _parse_question_block(question_num: int, text: str) -> Optional[Question]:
     # Pattern to match answer choices (a., b., c., etc. or *a., *b., etc.)
     # Must handle multi-line choices that may contain code blocks
     # Allows optional leading whitespace
-    choice_pattern = r'^\s*(\*?)([a-zA-Z])\.\s+'
+    # Uses (?:\s+|$) to match either whitespace after period or end-of-line,
+    # enabling choices like "*a.\n```python" where code block is on next line
+    choice_pattern = r'^\s*(\*?)([a-zA-Z])\.(?:\s+|$)'
     
     lines = text.split('\n')
     stem_lines = []
@@ -100,10 +121,6 @@ def _parse_question_block(question_num: int, text: str) -> Optional[Question]:
     in_code_block = False
     
     for line in lines:
-        # Track code blocks
-        if line.strip().startswith('```'):
-            in_code_block = not in_code_block
-        
         # Check if this line starts a new choice (only when not in code block)
         choice_match = re.match(choice_pattern, line) if not in_code_block else None
         
@@ -123,12 +140,19 @@ def _parse_question_block(question_num: int, text: str) -> Optional[Question]:
             remainder = line[choice_match.end():].strip()
             current_choice = (letter, is_correct)
             current_choice_lines = [remainder] if remainder else []
+            
+            # Update code block state based on fence markers in remainder
+            in_code_block = _update_code_block_state(remainder, in_code_block)
         elif current_choice is not None:
             # Continue current choice
             current_choice_lines.append(line)
+            # Track code blocks in choice content
+            in_code_block = _update_code_block_state(line, in_code_block)
         else:
             # Still in question stem
             stem_lines.append(line)
+            # Track code blocks in stem
+            in_code_block = _update_code_block_state(line, in_code_block)
     
     # Don't forget the last choice
     if current_choice is not None:
