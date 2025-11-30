@@ -37,26 +37,27 @@ Options:
 
 The expected Markdown format for questions is:
 
-```markdown
+````markdown
 1. Question text here.
-   This can span multiple lines.
+This can span multiple lines.
    
-   ```python
-   # Code blocks are supported
-   def example():
-       return "Hello"
-   ```
+```python
+# Code blocks are supported
+def example():
+    return "Hello"
+```
    
-   a. First choice
-   b. Second choice
-   *c. Correct answer (marked with asterisk)
-   d. Fourth choice
+a. First choice
+b. Second choice
+*c. Correct answer (marked with asterisk)
+d. Fourth choice
 
 2. Another question?
-   *a. Correct answer
-   b. Wrong answer
-   c. Another wrong answer
-```
+*a. Correct answer
+b. Wrong answer
+c. Another wrong answer
+d. Another wrong answer
+````
 
 Key formatting rules:
 - Questions start with a number followed by a period (e.g., `1.`)
