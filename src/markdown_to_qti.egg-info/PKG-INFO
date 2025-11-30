@@ -1,3 +1,24 @@
+Metadata-Version: 2.4
+Name: markdown-to-qti
+Version: 0.1.0
+Summary: Converts Markdown Exam Files to QTI format for Canvas LMS Import
+License: MIT
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Education
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Requires-Dist: markdown>=3.4
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0; extra == "dev"
+Requires-Dist: pytest-cov>=4.0; extra == "dev"
+
 # markdown-to-qti
 
 Converts Markdown Exam Files to QTI format for Canvas LMS Import.
