@@ -1,5 +1,7 @@
 """
-QTI 2.2 XML generator for Canvas LMS import.
+QTI 1.2 XML generator for Canvas LMS import.
+
+Note: Canvas LMS uses QTI 1.2 format (compatible with IMS QTI specification).
 """
 import html
 import re

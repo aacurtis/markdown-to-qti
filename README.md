@@ -4,7 +4,7 @@ Converts Markdown Exam Files to QTI format for Canvas LMS Import.
 
 ## Overview
 
-This Python tool converts multiple-choice exam files written in Markdown format to QTI (Question and Test Interoperability) format, specifically QTI 1.2/2.2 compatible with Canvas LMS. It supports code blocks (with syntax highlighting) in both question stems and answer choices.
+This Python tool converts multiple-choice exam files written in Markdown format to QTI (Question and Test Interoperability) format, specifically QTI 1.2 compatible with Canvas LMS. It supports code blocks (with syntax highlighting) in both question stems and answer choices.
 
 ## Installation
 
