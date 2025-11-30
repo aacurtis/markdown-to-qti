@@ -109,7 +109,8 @@ def _parse_question_block(question_num: int, text: str) -> Optional[Question]:
     # Pattern to match answer choices (a., b., c., etc. or *a., *b., etc.)
     # Must handle multi-line choices that may contain code blocks
     # Allows optional leading whitespace
-    # Also allows choices with code block on same line (e.g., *a. ```python) or on next line (*a.\n```python)
+    # Uses (?:\s+|$) to match either whitespace after period or end-of-line,
+    # enabling choices like "*a.\n```python" where code block is on next line
     choice_pattern = r'^\s*(\*?)([a-zA-Z])\.(?:\s+|$)'
     
     lines = text.split('\n')
