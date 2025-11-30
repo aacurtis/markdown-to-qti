@@ -90,7 +90,8 @@ def _parse_question_block(question_num: int, text: str) -> Optional[Question]:
     # Pattern to match answer choices (a., b., c., etc. or *a., *b., etc.)
     # Must handle multi-line choices that may contain code blocks
     # Allows optional leading whitespace
-    choice_pattern = r'^\s*(\*?)([a-zA-Z])\.\s+'
+    # Also allows choices with code block on same line (e.g., *a. ```python) or on next line (*a.\n```python)
+    choice_pattern = r'^\s*(\*?)([a-zA-Z])\.(?:\s+|$)'
     
     lines = text.split('\n')
     stem_lines = []
@@ -100,10 +101,6 @@ def _parse_question_block(question_num: int, text: str) -> Optional[Question]:
     in_code_block = False
     
     for line in lines:
-        # Track code blocks
-        if line.strip().startswith('```'):
-            in_code_block = not in_code_block
-        
         # Check if this line starts a new choice (only when not in code block)
         choice_match = re.match(choice_pattern, line) if not in_code_block else None
         
@@ -123,12 +120,26 @@ def _parse_question_block(question_num: int, text: str) -> Optional[Question]:
             remainder = line[choice_match.end():].strip()
             current_choice = (letter, is_correct)
             current_choice_lines = [remainder] if remainder else []
+            
+            # Check if remainder contains code block markers (e.g., *a. ```python)
+            if '```' in remainder:
+                # Count code block markers in remainder
+                fence_count = remainder.count('```')
+                if fence_count % 2 == 1:
+                    # Odd number means we're now in a code block
+                    in_code_block = True
         elif current_choice is not None:
             # Continue current choice
             current_choice_lines.append(line)
+            # Track code blocks in choice content
+            if line.strip().startswith('```'):
+                in_code_block = not in_code_block
         else:
             # Still in question stem
             stem_lines.append(line)
+            # Track code blocks in stem
+            if line.strip().startswith('```'):
+                in_code_block = not in_code_block
     
     # Don't forget the last choice
     if current_choice is not None:
